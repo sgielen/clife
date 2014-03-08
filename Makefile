@@ -1,2 +1,2 @@
-main: main.cpp Makefile clife.hpp
-	g++ -o main main.cpp -lcrypto -O3 -Wall
+multi_indep: multi_indep.cpp Makefile clife.hpp
+	g++ -o multi_indep multi_indep.cpp -lcrypto -O3 -Wall
