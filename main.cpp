@@ -11,6 +11,31 @@
  *  Feel free to use this for anything you like
  */
 
+template <int height, int width>
+void print_rgb(GameOfLifeField<height, width> red, GameOfLifeField<height, width> green, GameOfLifeField<height, width> blue) {
+	char on = 0x80;
+	char off = 0x00;
+	for(int y = 0; y < height; ++y) {
+		for(int x = 0; x < width; ++x) {
+			std::cout << (red.is_set(y, x) ? on : off);
+			std::cout << (green.is_set(y, x) ? on : off);
+			std::cout << (blue.is_set(y, x) ? on : off);
+		}
+	}
+}
+
+template <typename FieldType>
+void check_stop_condition(FieldType field, std::vector<std::string> &earlier_hashes, bool &done, int &repeats_to_do) {
+	std::string hash = field.field_hash();
+	for(int i = 0; i < earlier_hashes.size(); ++i) {
+		if(earlier_hashes[i] == hash) {
+			done = true;
+			repeats_to_do = 10;
+			break;
+		}
+	}
+	earlier_hashes.push_back(hash);
+}
 
 int main(int argc, char *argv[]) {
 	int microsleeptime = 100000;
@@ -27,31 +52,29 @@ int main(int argc, char *argv[]) {
 
 	srand(time(NULL));
 	std::vector<std::string> earlier_hashes;
-	GameOfLifeField<8, 80> field;
+	GameOfLifeField<8, 80> red;
+	GameOfLifeField<8, 80> green;
+	GameOfLifeField<8, 80> blue;
 
-	std::string set("X");
-	std::string unset(" ");
+	red.generateRandom();
+	green.generateRandom();
+	blue.generateRandom();
 
-	field.generateRandom();
-	field.print_simple(std::cout, set, unset);
 	bool done = false;
 	int repeats_to_do = 0;
+	print_rgb(red, green, blue);
 	while(!done || repeats_to_do > 0) {
 		if(repeats_to_do > 0) {
 			--repeats_to_do;
 		}
-		field.nextState();
-		field.print_simple(std::cout, set, unset);
+		red.nextState();
+		green.nextState();
+		blue.nextState();
+		print_rgb(red, green, blue);
 		if(!done) {
-			std::string hash = field.field_hash();
-			for(int i = 0; i < earlier_hashes.size(); ++i) {
-				if(earlier_hashes[i] == hash) {
-					done = true;
-					repeats_to_do = 10;
-					break;
-				}
-			}
-			earlier_hashes.push_back(hash);
+			check_stop_condition(red, earlier_hashes, done, repeats_to_do);
+			check_stop_condition(green, earlier_hashes, done, repeats_to_do);
+			check_stop_condition(blue, earlier_hashes, done, repeats_to_do);
 		}
 		usleep(microsleeptime);
 		continue;
