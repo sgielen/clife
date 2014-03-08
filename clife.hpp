@@ -45,7 +45,7 @@ private:
 	IteratorType row_ptr;
 };
 
-template <typename ValueType, int height, int width>
+template <typename ValueType, int height, int width, bool wrapping = true>
 struct GameOfLifeField {
 	GameOfLifeField() : field(width * height, ValueType()) {
 	}
@@ -71,6 +71,16 @@ struct GameOfLifeField {
 		}
 	}
 
+	void add_if_inside_or_wrapping_and_set(std::vector<ValueType> &vt, int y, int x) {
+		if(wrapping) {
+			y += height;
+			y %= height;
+			x += width;
+			x %= width;
+		}
+		return add_if_inside_and_set(vt, y, x);
+	}
+
 	bool is_set(int y, int x) {
 		if(!is_in_bounds(y, x)) {
 			throw std::runtime_error("Out of bounds");
@@ -80,14 +90,14 @@ struct GameOfLifeField {
 
 	std::vector<ValueType> neighbors_set(int y, int x) {
 		std::vector<ValueType> neigh;
-		add_if_inside_and_set(neigh, y-1, x-1);
-		add_if_inside_and_set(neigh, y-1, x  );
-		add_if_inside_and_set(neigh, y-1, x+1);
-		add_if_inside_and_set(neigh, y  , x-1);
-		add_if_inside_and_set(neigh, y  , x+1);
-		add_if_inside_and_set(neigh, y+1, x-1);
-		add_if_inside_and_set(neigh, y+1, x  );
-		add_if_inside_and_set(neigh, y+1, x+1);
+		add_if_inside_or_wrapping_and_set(neigh, y-1, x-1);
+		add_if_inside_or_wrapping_and_set(neigh, y-1, x  );
+		add_if_inside_or_wrapping_and_set(neigh, y-1, x+1);
+		add_if_inside_or_wrapping_and_set(neigh, y  , x-1);
+		add_if_inside_or_wrapping_and_set(neigh, y  , x+1);
+		add_if_inside_or_wrapping_and_set(neigh, y+1, x-1);
+		add_if_inside_or_wrapping_and_set(neigh, y+1, x  );
+		add_if_inside_or_wrapping_and_set(neigh, y+1, x+1);
 		return neigh;
 	}
 
