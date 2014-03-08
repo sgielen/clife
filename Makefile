@@ -1,3 +1,5 @@
+all: single multi_indep multicolor
+
 single: single.cpp Makefile clife.hpp
 	g++ -o single single.cpp -lcrypto -O3 -Wall
 
