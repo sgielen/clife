@@ -57,9 +57,9 @@ int main(int argc, char *argv[]) {
 	GameOfLifeField<8, 80> green;
 	GameOfLifeField<8, 80> blue;
 
-	red.generateRandom();
-	green.generateRandom();
-	blue.generateRandom();
+	red.generateRandom(35);
+	green.generateRandom(35);
+	blue.generateRandom(35);
 
 	bool red_done = false;
 	bool green_done = false;

@@ -121,8 +121,10 @@ struct GameOfLifeField {
 		return std::string(&*digest, MD5_DIGEST_LENGTH);
 	}
 
-	void generateRandom() {
-		int chance_set = 15; // percentage
+	void generateRandom(int chance_set) {
+		if(chance_set < 0 || chance_set > 100) {
+			throw std::runtime_error("Out of bounds");
+		}
 		for(int i = 0; i < height; ++i) {
 			for(int j = 0; j < width; ++j) {
 				field[i * width + j] = rand() % 100 < chance_set ? 1 : 0;
