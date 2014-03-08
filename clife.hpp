@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdexcept>
 #include <openssl/md5.h>
+#include <stdlib.h>
 
 /** Written by Sjors Gielen, eth0 winter 2014
  *  Feel free to use this for anything you like
