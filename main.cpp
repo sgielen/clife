@@ -157,16 +157,25 @@ int main(int argc, char *argv[]) {
 
 	field.generateRandom();
 	field.print_simple(std::cout, set, unset);
-	while(true) {
+	bool done = false;
+	int repeats_to_do = 0;
+	while(!done || repeats_to_do > 0) {
+		if(repeats_to_do > 0) {
+			--repeats_to_do;
+		}
 		field.nextState();
 		field.print_simple(std::cout, set, unset);
-		std::string hash = field.field_hash();
-		for(int i = 0; i < earlier_hashes.size(); ++i) {
-			if(earlier_hashes[i] == hash) {
-				return 0;
+		if(!done) {
+			std::string hash = field.field_hash();
+			for(int i = 0; i < earlier_hashes.size(); ++i) {
+				if(earlier_hashes[i] == hash) {
+					done = true;
+					repeats_to_do = 10;
+					break;
+				}
 			}
+			earlier_hashes.push_back(hash);
 		}
-		earlier_hashes.push_back(hash);
 		usleep(microsleeptime);
 		continue;
 	}
