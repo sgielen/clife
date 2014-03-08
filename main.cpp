@@ -152,14 +152,11 @@ int main(int argc, char *argv[]) {
 		std::string hash = field.field_hash();
 		for(int i = 0; i < earlier_hashes.size(); ++i) {
 			if(earlier_hashes[i] == hash) {
-				std::cout << "Seen this hash before! Quitting.\n";
-				goto end_loop;
+				return 0;
 			}
 		}
 		earlier_hashes.push_back(hash);
 		usleep(microsleeptime);
 		continue;
-end_loop:
-		break;
 	}
 }
