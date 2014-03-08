@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <stdexcept>
+#include <sstream>
 #include <unistd.h>
 #include <openssl/md5.h>
 #include <stdlib.h>
@@ -132,7 +134,12 @@ private:
 int main(int argc, char *argv[]) {
 	int microsleeptime = 100;
 	if(argc == 2) {
-		microsleeptime = std::stoi(argv[1]);
+		std::stringstream ss;
+		ss << argv[1];
+		ss >> microsleeptime;
+		if(!ss) {
+			std::cerr << "Usage: " << argv[0] << " [microsleeptime]" << std::endl;
+		}
 	} else if(argc > 2) {
 		std::cerr << "Usage: " << argv[0] << " [microsleeptime]" << std::endl;
 	}
