@@ -38,7 +38,7 @@ struct SimpleValue {
 		return (value ? "1" : "0");
 	}
 
-	char printChar() const {
+	char getChar() const {
 		return (value ? 'o' : ' ');
 	}
 	void print(std::ostream &os) const {
