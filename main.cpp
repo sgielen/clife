@@ -11,8 +11,8 @@
  *  Feel free to use this for anything you like
  */
 
-template <int height, int width>
-void print_rgb(GameOfLifeField<height, width> red, GameOfLifeField<height, width> green, GameOfLifeField<height, width> blue) {
+template <typename ValueType, int height, int width>
+void print_rgb(GameOfLifeField<ValueType, height, width> red, GameOfLifeField<ValueType, height, width> green, GameOfLifeField<ValueType, height, width> blue) {
 	char on = 0x80;
 	char off = 0x00;
 	for(int y = 0; y < height; ++y) {
@@ -24,6 +24,27 @@ void print_rgb(GameOfLifeField<height, width> red, GameOfLifeField<height, width
 	}
 	std::cout << std::flush;
 }
+
+template <char ifSet, char ifUnset>
+struct SimpleValue {
+	bool value;
+
+	SimpleValue() : value(false) {}
+	SimpleValue(std::vector<SimpleValue> vec) : value(true) {}
+	SimpleValue(bool value) : value(value) {}
+
+	operator bool() const { return value; }
+	std::string hash() const {
+		return (value ? "1" : "0");
+	}
+
+	char printChar() const {
+		return (value ? 'o' : ' ');
+	}
+	void print(std::ostream &os) const {
+		os << (value ? ifSet : ifUnset);
+	}
+};
 
 template <typename FieldType>
 void check_stop_condition(FieldType field, std::vector<std::string> &earlier_hashes, bool &done, int &repeats_to_do) {
@@ -53,9 +74,9 @@ int main(int argc, char *argv[]) {
 
 	srand(time(NULL));
 	std::vector<std::string> earlier_hashes;
-	GameOfLifeField<8, 80> red;
-	GameOfLifeField<8, 80> green;
-	GameOfLifeField<8, 80> blue;
+	GameOfLifeField<SimpleValue<0x80, 0>, 8, 80> red;
+	GameOfLifeField<SimpleValue<0x80, 0>, 8, 80> green;
+	GameOfLifeField<SimpleValue<0x80, 0>, 8, 80> blue;
 
 	red.generateRandom(35);
 	green.generateRandom(35);
