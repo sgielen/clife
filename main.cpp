@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+/** Written by Sjors Gielen, eth0 winter 2014
+ *  Feel free to use this for anything you like
+ */
+
 template <int width>
 struct GameOfLifeRow {
 	GameOfLifeRow(char *row_ptr)
