@@ -136,7 +136,7 @@ private:
 };
 
 int main(int argc, char *argv[]) {
-	int microsleeptime = 100;
+	int microsleeptime = 100000;
 	if(argc == 2) {
 		std::stringstream ss;
 		ss << argv[1];
