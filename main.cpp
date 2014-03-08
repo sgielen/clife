@@ -106,6 +106,7 @@ struct GameOfLifeField {
 				os << (field[i * width + j] ? set : unset);
 			}
 		}
+		os << std::flush;
 	}
 
 	std::string field_hash() const {
