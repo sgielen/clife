@@ -60,10 +60,12 @@ int main(int argc, char *argv[]) {
 	green.generateRandom();
 	blue.generateRandom();
 
-	bool done = false;
+	bool red_done = false;
+	bool green_done = false;
+	bool blue_done = false;
 	int repeats_to_do = 0;
 	print_rgb(red, green, blue);
-	while(!done || repeats_to_do > 0) {
+	while(!red_done || !green_done || !blue_done || repeats_to_do > 0) {
 		if(repeats_to_do > 0) {
 			--repeats_to_do;
 		}
@@ -71,10 +73,10 @@ int main(int argc, char *argv[]) {
 		green.nextState();
 		blue.nextState();
 		print_rgb(red, green, blue);
-		if(!done) {
-			check_stop_condition(red, earlier_hashes, done, repeats_to_do);
-			check_stop_condition(green, earlier_hashes, done, repeats_to_do);
-			check_stop_condition(blue, earlier_hashes, done, repeats_to_do);
+		if(!red_done || !green_done || !blue_done) {
+			check_stop_condition(red, earlier_hashes, red_done, repeats_to_do);
+			check_stop_condition(green, earlier_hashes, green_done, repeats_to_do);
+			check_stop_condition(blue, earlier_hashes, blue_done, repeats_to_do);
 		}
 		usleep(microsleeptime);
 		continue;
