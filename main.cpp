@@ -22,6 +22,7 @@ void print_rgb(GameOfLifeField<height, width> red, GameOfLifeField<height, width
 			std::cout << (blue.is_set(y, x) ? on : off);
 		}
 	}
+	std::cout << std::flush;
 }
 
 template <typename FieldType>
