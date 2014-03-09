@@ -54,7 +54,7 @@ struct GameOfLifeField {
 		if(y >= height) {
 			throw std::runtime_error("Out of bounds");
 		}
-		return GameOfLifeRow<ValueType, width>(field.data() + y * width);
+		return GameOfLifeRow<ValueType, width>(field.begin() + y * width);
 	}
 
 	bool is_in_bounds(int y, int x) {
