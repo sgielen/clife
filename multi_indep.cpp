@@ -2,6 +2,7 @@
 #include <vector>
 #include <sstream>
 #include "clife.hpp"
+#include "util.hpp"
 #include <unistd.h>
 #include <openssl/md5.h>
 #include <stdlib.h>
@@ -72,7 +73,8 @@ int main(int argc, char *argv[]) {
 		std::cerr << "Usage: " << argv[0] << " [microsleeptime]" << std::endl;
 	}
 
-	srand(time(NULL));
+	init_random();
+
 	std::vector<std::string> earlier_hashes;
 	GameOfLifeField<SimpleValue<0x80, 0>, 8, 80> red;
 	GameOfLifeField<SimpleValue<0x80, 0>, 8, 80> green;
