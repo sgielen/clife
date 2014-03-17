@@ -140,8 +140,24 @@ struct GameOfLifeField {
 
 	void print_simple(std::ostream &os) {
 		for(int i = 0; i < height; ++i) {
+			if(i == 0) {
+				field[0].begin_screen(os);
+			}
+
 			for(int j = 0; j < width; ++j) {
+				if(j == 0) {
+					field[i * width].begin_line(os);
+				}
+
 				field[i * width + j].print(os);
+
+				if(j == width - 1) {
+					field[i * width + j].end_line(os);
+				}
+			}
+
+			if(i == height - 1) {
+				field[i].end_screen(os);
 			}
 		}
 		os << std::flush;

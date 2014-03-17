@@ -61,6 +61,11 @@ struct MulticolorValue {
 		return (value ? 'o' : ' ');
 	}
 
+	void begin_screen(std::ostream &os) const {}
+	void end_screen(std::ostream &os) const {}
+	void begin_line(std::ostream &os) const {}
+	void end_line(std::ostream &os) const {}
+
 	void print(std::ostream &os) const {
 		if(value) {
 			os << red << green << blue;
