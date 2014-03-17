@@ -13,6 +13,8 @@
  *  Feel free to use this for anything you like
  */
 
+const bool to_ledscreen = false;
+
 struct MulticolorValue {
 	bool value;
 	uint8_t red;
@@ -61,16 +63,40 @@ struct MulticolorValue {
 		return (value ? 'o' : ' ');
 	}
 
-	void begin_screen(std::ostream &os) const {}
-	void end_screen(std::ostream &os) const {}
-	void begin_line(std::ostream &os) const {}
-	void end_line(std::ostream &os) const {}
+	void begin_screen(std::ostream &os) const {
+		if(!to_ledscreen) {
+			std::cout << "+---------------------------------------"
+			  << "-----------------------------------------+"
+			  << std::endl;
+		}
+	}
+	void end_screen(std::ostream &os) const {
+		begin_screen(os);
+	}
+	void begin_line(std::ostream &os) const {
+		if(!to_ledscreen) {
+			std::cout << "|";
+		}
+	}
+	void end_line(std::ostream &os) const {
+		if(!to_ledscreen) {
+			std::cout << "|" << std::endl;
+		}
+	}
 
 	void print(std::ostream &os) const {
-		if(value) {
+		if(value && to_ledscreen) {
 			os << red << green << blue;
-		} else {
+		} else if(value) {
+			uint8_t redval = red / 43;
+			uint8_t greenval = green / 43;
+			uint8_t blueval = blue / 43;
+			uint8_t code = 16 + 36 * redval + 6 * greenval + blueval;
+			os << "\x1b[38;5;" << int(code) << "mo\x1b[m";
+		} else if(to_ledscreen) {
 			os << '\x00' << '\x00' << '\x00';
+		} else {
+			os << ' ';
 		}
 	}
 };
