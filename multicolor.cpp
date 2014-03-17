@@ -15,9 +15,9 @@
 
 struct MulticolorValue {
 	bool value;
-	char red;
-	char green;
-	char blue;
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
 
 	MulticolorValue() : value(false), red(0), green(0), blue(0) {}
 	MulticolorValue(std::vector<MulticolorValue> vec) : value(true) {
@@ -51,7 +51,7 @@ struct MulticolorValue {
 	operator bool() const { return value; }
 	std::string hash() const {
 		if(value) {
-			return std::string("1") + red + green + blue;
+			return std::string("1") + char(red) + char(green) + char(blue);
 		} else {
 			return "0\x00\x00\x00";
 		}
