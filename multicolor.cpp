@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <cassert>
+#include <cmath>
 
 /** Written by Sjors Gielen, eth0 winter 2014
  *  Feel free to use this for anything you like
@@ -23,23 +24,83 @@ struct MulticolorValue {
 
 	MulticolorValue() : value(false), red(0), green(0), blue(0) {}
 	MulticolorValue(std::vector<MulticolorValue> vec) : value(true) {
-		int sum_red = 0;
-		int sum_green = 0;
-		int sum_blue = 0;
-		int sum = 0;
+		std::vector<int> hues;
 		std::vector<MulticolorValue>::iterator it;
 		for(it = vec.begin(); it != vec.end(); ++it) {
 			if(it->value) {
-				sum_red += it->red;
-				sum_green += it->green;
-				sum_blue += it->blue;
-				sum++;
+				float r = float(it->red) / UINT8_MAX;
+				float g = float(it->green) / UINT8_MAX;
+				float b = float(it->blue) / UINT8_MAX;
+				float min = std::min(r, std::min(g, b));
+				float max = std::max(r, std::max(g, b));
+				// hue from 0 to 360
+				int hue = r == max ? (60 * (0 + (g-b)/(max-min))) :
+				            g == max ? (60 * (2 + (b-r)/(max-min))) :
+				                       (60 * (4 + (r-g)/(max-min)));
+				hues.push_back(hue);
 			}
 		}
-		assert(sum == 3);
-		red = sum_red / sum;
-		green = sum_green / sum;
-		blue = sum_blue / sum;
+		assert(hues.size() == 3);
+		std::sort(hues.begin(), hues.end());
+		int range1 = hues[2] - hues[0];
+		int range2 = (hues[0] + 360) - hues[1];
+		int range3 = (hues[1] + 360) - hues[2];
+		int avghue;
+		if(std::min(range1, std::min(range2, range3)) == range1) {
+			avghue = (hues[0] + hues[1] + hues[2]) / 3;
+		} else if(std::min(range1, std::min(range2, range3)) == range2) {
+			avghue = (hues[0] + hues[1] + hues[2] + 360) / 3;
+		} else {
+			avghue = (hues[0] + hues[1] + hues[2] + 720) / 3;
+		}
+		avghue %= 360;
+		float sat = 1;
+		float value = 1;
+		int h_i = std::floor(avghue / 60);
+		float f = (avghue / 60.) - h_i;
+		float p = value * (1 - sat);
+		float q = value * (1 - f * sat);
+		float t = value * (1 - (1 - f) * sat);
+
+		value *= 255;
+		p *= 255;
+		q *= 255;
+		t *= 255;
+
+		switch(h_i) {
+		case 0:
+			red = value;
+			green = t;
+			blue = p;
+			break;
+		case 1:
+			red = q;
+			green = value;
+			blue = p;
+			break;
+		case 2:
+			red = p;
+			green = value;
+			blue = t;
+			break;
+		case 3:
+			red = p;
+			green = q;
+			blue = value;
+			break;
+		case 4:
+			red = t;
+			green = p;
+			blue = value;
+			break;
+		case 5:
+			red = value;
+			green = p;
+			blue = q;
+			break;
+		default:
+			abort();
+		};
 	}
 	MulticolorValue(bool value) : value(value), red(0), green(0), blue(0) {
 		if(value) {
