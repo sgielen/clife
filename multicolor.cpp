@@ -25,12 +25,11 @@ struct MulticolorValue {
 	MulticolorValue() : value(false), red(0), green(0), blue(0) {}
 	MulticolorValue(std::vector<MulticolorValue> vec) : value(true) {
 		std::vector<int> hues;
-		std::vector<MulticolorValue>::iterator it;
-		for(it = vec.begin(); it != vec.end(); ++it) {
-			if(it->value) {
-				float r = float(it->red) / UINT8_MAX;
-				float g = float(it->green) / UINT8_MAX;
-				float b = float(it->blue) / UINT8_MAX;
+		for(auto const &cell : vec) {
+			if(cell.value) {
+				float r = float(cell.red) / UINT8_MAX;
+				float g = float(cell.green) / UINT8_MAX;
+				float b = float(cell.blue) / UINT8_MAX;
 				float min = std::min(r, std::min(g, b));
 				float max = std::max(r, std::max(g, b));
 				// hue from 0 to 360

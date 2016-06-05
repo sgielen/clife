@@ -165,10 +165,9 @@ struct GameOfLifeField {
 
 	std::string field_hash() const {
 		char digest[MD5_DIGEST_LENGTH];
-		typename std::vector<ValueType>::const_iterator it;
 		std::string str_field;
-		for(it = field.begin(); it != field.end(); ++it) {
-			str_field += it->hash();
+		for(auto const &cell : field) {
+			str_field += cell.hash();
 		}
 		MD5((unsigned char*) str_field.c_str(), str_field.length(), (unsigned char*)&digest);
 		return std::string(&*digest, MD5_DIGEST_LENGTH);

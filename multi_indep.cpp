@@ -76,9 +76,9 @@ int main(int argc, char *argv[]) {
 	init_random();
 
 	std::vector<std::string> earlier_hashes;
-	GameOfLifeField<SimpleValue<0x80, 0>, 8, 80> red;
-	GameOfLifeField<SimpleValue<0x80, 0>, 8, 80> green;
-	GameOfLifeField<SimpleValue<0x80, 0>, 8, 80> blue;
+	GameOfLifeField<SimpleValue<char(0x80), 0>, 8, 80> red;
+	GameOfLifeField<SimpleValue<char(0x80), 0>, 8, 80> green;
+	GameOfLifeField<SimpleValue<char(0x80), 0>, 8, 80> blue;
 
 	red.generateRandom(35);
 	green.generateRandom(35);
