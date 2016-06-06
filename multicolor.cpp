@@ -33,9 +33,13 @@ struct MulticolorValue {
 				float min = std::min(r, std::min(g, b));
 				float max = std::max(r, std::max(g, b));
 				// hue from 0 to 360
-				int hue = r == max ? (60 * (0 + (g-b)/(max-min))) :
+				int hue = max == 0 ? 0 :
+				            r == max ? (60 * (0 + (g-b)/(max-min))) :
 				            g == max ? (60 * (2 + (b-r)/(max-min))) :
 				                       (60 * (4 + (r-g)/(max-min)));
+				if(hue < 0) {
+					hue += 360;
+				}
 				hues.push_back(hue);
 			}
 		}
@@ -103,10 +107,10 @@ struct MulticolorValue {
 	}
 	MulticolorValue(bool value) : value(value), red(0), green(0), blue(0) {
 		if(value) {
-			char color = rand() % 3;
-			red = color == 0 ? 255 : 0;
-			green = color == 1 ? 255 : 0;
-			blue = color == 2 ? 255 : 0;
+			char color = rand() % 5;
+			red = (color == 0 || color == 3 || color == 4) ? 255 : 0;
+			green = (color == 1 || color == 3) ? 255 : 0;
+			blue = (color == 2 || color == 4) ? 255 : 0;
 		}
 	}
 
