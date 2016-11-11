@@ -141,6 +141,7 @@ struct MulticolorValue {
 	}
 	void end_screen(std::ostream &os) const {
 		begin_screen(os);
+		printf("\x1b[%d;%dH", 1, 1);
 	}
 	void begin_line(std::ostream &os) const {
 		if(!to_ledscreen && !concise) {
