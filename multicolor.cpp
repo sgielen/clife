@@ -3,12 +3,14 @@
 #include <sstream>
 #include "clife.hpp"
 #include "util.hpp"
+#include <pthread.h>
 #include <unistd.h>
 #include <openssl/md5.h>
 #include <stdlib.h>
 #include <time.h>
 #include <cassert>
 #include <cmath>
+#include <ctime>
 
 /** Written by Sjors Gielen, eth0 winter 2014
  *  Feel free to use this for anything you like
@@ -214,6 +216,15 @@ int main(int argc, char *argv[]) {
 	bool field_done = false;
 	int repeats_to_do = 0;
 	field.print_simple(std::cout);
+
+	pthread_mutex_t mtx;
+	pthread_mutex_init(&mtx, nullptr);
+	pthread_cond_t cond;
+	pthread_cond_init(&cond, nullptr);
+	struct timespec ts = {};
+	ts.tv_sec = std::time(nullptr);
+	pthread_mutex_lock(&mtx);
+
 	while(!field_done || repeats_to_do > 0) {
 		if(repeats_to_do > 0) {
 			--repeats_to_do;
@@ -223,7 +234,13 @@ int main(int argc, char *argv[]) {
 		if(!field_done) {
 			check_stop_condition(field, earlier_hashes, field_done, repeats_to_do);
 		}
-		usleep(microsleeptime);
-		continue;
+		ts.tv_nsec += 100000000;
+		ts.tv_sec += ts.tv_nsec / 1000000000;
+		ts.tv_nsec %= 1000000000;
+		pthread_cond_timedwait(&cond, &mtx, &ts);
 	}
+
+	pthread_mutex_unlock(&mtx);
+	pthread_cond_destroy(&cond);
+	pthread_mutex_destroy(&mtx);
 }
