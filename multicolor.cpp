@@ -14,7 +14,9 @@
  *  Feel free to use this for anything you like
  */
 
-const bool to_ledscreen = false;
+constexpr bool to_ledscreen = false;
+constexpr int height = 8;
+constexpr int width = 80;
 
 struct MulticolorValue {
 	bool value;
@@ -194,7 +196,7 @@ int main(int argc, char *argv[]) {
 	init_random();
 
 	std::vector<std::string> earlier_hashes;
-	GameOfLifeField<MulticolorValue, 8, 80> field;
+	GameOfLifeField<MulticolorValue, height, width> field;
 
 	field.generateRandom(35);
 
