@@ -184,7 +184,7 @@ void check_stop_condition(FieldType field, std::vector<std::string> &earlier_has
 	for(int i = 0; i < earlier_hashes.size(); ++i) {
 		if(earlier_hashes[i] == hash) {
 			done = true;
-			repeats_to_do = 10;
+			repeats_to_do = 50;
 			break;
 		}
 	}
