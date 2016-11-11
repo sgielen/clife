@@ -24,9 +24,10 @@ struct MulticolorValue {
 	uint8_t red;
 	uint8_t green;
 	uint8_t blue;
+	uint8_t age;
 
-	MulticolorValue() : value(false), red(0), green(0), blue(0) {}
-	MulticolorValue(std::vector<MulticolorValue> vec) : value(true) {
+	MulticolorValue() : value(false), red(0), green(0), blue(0), age(0){}
+	MulticolorValue(std::vector<MulticolorValue> vec) : value(true), age(0) {
 		std::vector<int> hues;
 		for(auto const &cell : vec) {
 			if(cell.value) {
@@ -108,13 +109,17 @@ struct MulticolorValue {
 			abort();
 		};
 	}
-	MulticolorValue(bool value) : value(value), red(0), green(0), blue(0) {
+	MulticolorValue(bool value) : value(value), red(0), green(0), blue(0), age(0) {
 		if(value) {
 			char color = rand() % 5;
 			red = (color == 0 || color == 3 || color == 4) ? 255 : 0;
 			green = (color == 1 || color == 3) ? 255 : 0;
 			blue = (color == 2 || color == 4) ? 255 : 0;
 		}
+	}
+
+	void age_once() {
+		age = (age + 1) % 50;
 	}
 
 	operator bool() const { return value; }
@@ -158,9 +163,11 @@ struct MulticolorValue {
 		if(value && to_ledscreen) {
 			os << red << green << blue;
 		} else if(value) {
-			uint8_t redval = red / 43;
-			uint8_t greenval = green / 43;
-			uint8_t blueval = blue / 43;
+			double brightness = std::max(0.3, 1 - age / 20.);
+
+			uint8_t redval = (red * brightness) / 43;
+			uint8_t greenval = (green * brightness) / 43;
+			uint8_t blueval = (blue * brightness) / 43;
 			uint8_t code = 16 + 36 * redval + 6 * greenval + blueval;
 			os << "\x1b[38;5;" << int(code) << "mo\x1b[m";
 		} else if(to_ledscreen) {

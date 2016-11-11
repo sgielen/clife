@@ -110,6 +110,7 @@ struct GameOfLifeField {
 				bool set = is_set(y, x);
 				if(set && (num == 2 || num == 3)) {
 					new_field[y * width + x] = field[y * width + x];
+					new_field[y * width + x].age_once();
 				} else if(num == 3) {
 					new_field[y * width + x] = ValueType(neighbors);
 				}

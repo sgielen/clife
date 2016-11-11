@@ -45,6 +45,8 @@ struct SimpleValue {
 	void print(std::ostream &os) const {
 		os << (value ? ifSet : ifUnset);
 	}
+
+	void age_once() const {/* ignore */}
 };
 
 template <typename FieldType>
