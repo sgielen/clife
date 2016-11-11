@@ -113,10 +113,10 @@ struct MulticolorValue {
 	}
 	MulticolorValue(bool value) : value(value), red(0), green(0), blue(0), age(0) {
 		if(value) {
-			char color = rand() % 5;
-			red = (color == 0 || color == 3 || color == 4) ? 255 : 0;
-			green = (color == 1 || color == 3) ? 255 : 0;
-			blue = (color == 2 || color == 4) ? 255 : 0;
+			char color = (rand() % 6) + 1;
+			red   = (color & 1) ? 255 : 0;
+			green = (color & 2) ? 255 : 0;
+			blue  = (color & 4) ? 255 : 0;
 		}
 	}
 
