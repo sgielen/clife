@@ -12,12 +12,12 @@
  *  Feel free to use this for anything you like
  */
 
-template <typename ValueType, int height, int width>
-void print_rgb(GameOfLifeField<ValueType, height, width> red, GameOfLifeField<ValueType, height, width> green, GameOfLifeField<ValueType, height, width> blue) {
+template <typename ValueType>
+void print_rgb(GameOfLifeField<ValueType> red, GameOfLifeField<ValueType> green, GameOfLifeField<ValueType> blue) {
 	char on = 0x80;
 	char off = 0x00;
-	for(int y = 0; y < height; ++y) {
-		for(int x = 0; x < width; ++x) {
+	for(int y = 0; y < red.get_height(); ++y) {
+		for(int x = 0; x < red.get_width(); ++x) {
 			std::cout << (red.is_set(y, x) ? on : off);
 			std::cout << (green.is_set(y, x) ? on : off);
 			std::cout << (blue.is_set(y, x) ? on : off);
@@ -78,9 +78,9 @@ int main(int argc, char *argv[]) {
 	init_random();
 
 	std::vector<std::string> earlier_hashes;
-	GameOfLifeField<SimpleValue<char(0x80), 0>, 8, 80> red;
-	GameOfLifeField<SimpleValue<char(0x80), 0>, 8, 80> green;
-	GameOfLifeField<SimpleValue<char(0x80), 0>, 8, 80> blue;
+	GameOfLifeField<SimpleValue<char(0x80), 0>> red(8, 80);
+	GameOfLifeField<SimpleValue<char(0x80), 0>> green(8, 80);
+	GameOfLifeField<SimpleValue<char(0x80), 0>> blue(8, 80);
 
 	red.generateRandom(35);
 	green.generateRandom(35);

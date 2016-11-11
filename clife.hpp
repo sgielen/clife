@@ -21,13 +21,14 @@
  * - std::string hash() const -> return some hash unique to this value
  */
 
-template <typename ValueType, int width>
+template <typename ValueType>
 struct GameOfLifeRow {
 	typedef std::vector<ValueType> VectorType;
 	typedef typename VectorType::iterator IteratorType;
 	
-	GameOfLifeRow(IteratorType row_ptr)
-	: row_ptr(row_ptr) {
+	GameOfLifeRow(int w, IteratorType row_ptr)
+	: width(w)
+	, row_ptr(row_ptr) {
 	}
 
 	ValueType &operator[](unsigned int x) {
@@ -42,19 +43,26 @@ struct GameOfLifeRow {
 	}
 
 private:
+	int width;
 	IteratorType row_ptr;
 };
 
-template <typename ValueType, int height, int width, bool wrapping = true>
+template <typename ValueType, bool wrapping = true>
 struct GameOfLifeField {
-	GameOfLifeField() : field(width * height, ValueType()) {
+	GameOfLifeField(int w, int h)
+	: field(w * h, ValueType())
+	, height(h)
+	, width(w) {
 	}
 
-	GameOfLifeRow<ValueType, width> operator[](unsigned int y) {
+	inline int get_height() { return height; }
+	inline int get_width() { return width; }
+
+	GameOfLifeRow<ValueType> operator[](unsigned int y) {
 		if(y >= height) {
 			throw std::runtime_error("Out of bounds");
 		}
-		return GameOfLifeRow<ValueType, width>(field.begin() + y * width);
+		return GameOfLifeRow<ValueType>(width, field.begin() + y * width);
 	}
 
 	bool is_in_bounds(int y, int x) {
@@ -187,4 +195,6 @@ struct GameOfLifeField {
 
 private:
 	std::vector<ValueType> field;
+	int height;
+	int width;
 };

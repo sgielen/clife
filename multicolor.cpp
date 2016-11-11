@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
 	init_random();
 
 	std::vector<std::string> earlier_hashes;
-	GameOfLifeField<MulticolorValue, height, width> field;
+	GameOfLifeField<MulticolorValue> field(height, width);
 
 	field.generateRandom(35);
 

@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 	init_random();
 
 	std::vector<std::string> earlier_hashes;
-	GameOfLifeField<SimpleValue<char(0x80), 0>, 8, 80> field;
+	GameOfLifeField<SimpleValue<char(0x80), 0>> field(8, 80);
 
 	field.generateRandom(35);
 
