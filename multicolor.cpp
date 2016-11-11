@@ -15,6 +15,7 @@
  */
 
 constexpr bool to_ledscreen = false;
+constexpr bool concise = true;
 constexpr int height = 8;
 constexpr int width = 80;
 
@@ -130,22 +131,24 @@ struct MulticolorValue {
 	}
 
 	void begin_screen(std::ostream &os) const {
-		if(!to_ledscreen) {
-			std::cout << "+---------------------------------------"
-			  << "-----------------------------------------+"
-			  << std::endl;
+		if(!to_ledscreen && !concise) {
+			std::cout << "+";
+			for(size_t i = 0; i < width; ++i) {
+				std::cout << "-";
+			}
+			std::cout << "+\n";
 		}
 	}
 	void end_screen(std::ostream &os) const {
 		begin_screen(os);
 	}
 	void begin_line(std::ostream &os) const {
-		if(!to_ledscreen) {
+		if(!to_ledscreen && !concise) {
 			std::cout << "|";
 		}
 	}
 	void end_line(std::ostream &os) const {
-		if(!to_ledscreen) {
+		if(!to_ledscreen && !concise) {
 			std::cout << "|" << std::endl;
 		}
 	}
