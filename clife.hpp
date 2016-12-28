@@ -110,8 +110,7 @@ struct GameOfLifeField {
 		return field[y * width + x];
 	}
 
-	std::vector<ValueType> neighbors_set(int y, int x) {
-		std::vector<ValueType> neigh;
+	void neighbors_set(int y, int x, std::vector<ValueType> &neigh) {
 		add_if_inside_or_wrapping_and_set(neigh, y-1, x-1);
 		add_if_inside_or_wrapping_and_set(neigh, y-1, x  );
 		add_if_inside_or_wrapping_and_set(neigh, y-1, x+1);
@@ -120,14 +119,15 @@ struct GameOfLifeField {
 		add_if_inside_or_wrapping_and_set(neigh, y+1, x-1);
 		add_if_inside_or_wrapping_and_set(neigh, y+1, x  );
 		add_if_inside_or_wrapping_and_set(neigh, y+1, x+1);
-		return neigh;
 	}
 
 	void nextState() {
 		std::vector<ValueType> new_field(width * height, ValueType());
+		std::vector<ValueType> neighbors;
 		for(int y = 0; y < height; ++y) {
 			for(int x = 0; x < width; ++x) {
-				std::vector<ValueType> neighbors = neighbors_set(y, x);
+				neighbors.clear();
+				neighbors_set(y, x, neighbors);
 				int num = neighbors.size();
 				bool set = is_set(y, x);
 				if(set && (num == 2 || num == 3)) {
