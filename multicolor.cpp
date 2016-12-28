@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cmath>
 #include <ctime>
+#include <sys/ioctl.h>
 
 /** Written by Sjors Gielen, eth0 winter 2014
  *  Feel free to use this for anything you like
@@ -18,8 +19,7 @@
 
 constexpr bool to_ledscreen = false;
 constexpr bool concise = true;
-constexpr int height = 8;
-constexpr int width = 80;
+std::function<int()> get_width;
 
 struct MulticolorValue {
 	bool value;
@@ -140,7 +140,7 @@ struct MulticolorValue {
 	void begin_screen(std::ostream &os) const {
 		if(!to_ledscreen && !concise) {
 			std::cout << "+";
-			for(size_t i = 0; i < width; ++i) {
+			for(size_t i = 0; i < get_width(); ++i) {
 				std::cout << "-";
 			}
 			std::cout << "+\n";
@@ -208,14 +208,19 @@ int main(int argc, char *argv[]) {
 
 	init_random();
 
+	winsize current_winsize;
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &current_winsize);
+
 	std::vector<std::string> earlier_hashes;
-	GameOfLifeField<MulticolorValue> field(height, width);
+	GameOfLifeField<MulticolorValue> field(current_winsize.ws_col, current_winsize.ws_row);
+	get_width = [&field]() {
+		return field.get_width();
+	};
 
 	field.generateRandom(35);
 
 	bool field_done = false;
 	int repeats_to_do = 0;
-	field.print_simple(std::cout);
 
 	pthread_mutex_t mtx;
 	pthread_mutex_init(&mtx, nullptr);
@@ -226,6 +231,14 @@ int main(int argc, char *argv[]) {
 	pthread_mutex_lock(&mtx);
 
 	while(!field_done || repeats_to_do > 0) {
+		winsize new_winsize;
+		ioctl(STDOUT_FILENO, TIOCGWINSZ, &new_winsize);
+		if(current_winsize.ws_col != new_winsize.ws_col
+		|| current_winsize.ws_row != new_winsize.ws_row) {
+			field.resize(new_winsize.ws_col, new_winsize.ws_row);
+		}
+		current_winsize = new_winsize;
+
 		if(repeats_to_do > 0) {
 			--repeats_to_do;
 		}

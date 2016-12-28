@@ -55,6 +55,20 @@ struct GameOfLifeField {
 	, width(w) {
 	}
 
+	void resize(int w, int h) {
+		std::vector<ValueType> newfield(w * h, ValueType());
+		int minwidth = w < width ? w : width;
+		int minheight = h < height ? h : height;
+		for(size_t x = 0; x < minwidth; ++x) {
+			for(size_t y = 0; y < minheight; ++y) {
+				newfield[y * w + x] = field[y * width + x];
+			}
+		}
+		height = h;
+		width = w;
+		field = std::move(newfield);
+	}
+
 	inline int get_height() { return height; }
 	inline int get_width() { return width; }
 
