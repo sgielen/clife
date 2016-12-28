@@ -21,6 +21,11 @@ constexpr bool to_ledscreen = false;
 constexpr bool concise = true;
 std::function<int()> get_width;
 
+// Uncomment to get terminal-based size
+#define FIXED_SIZE
+#define FIXED_WIDTH 80
+#define FIXED_HEIGHT 8
+
 struct MulticolorValue {
 	bool value;
 	uint8_t red;
@@ -209,8 +214,12 @@ int main(int argc, char *argv[]) {
 	init_random();
 
 	winsize current_winsize;
+#if defined(FIXED_SIZE)
+	current_winsize.ws_col = FIXED_WIDTH;
+	current_winsize.ws_row = FIXED_HEIGHT;
+#else
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &current_winsize);
-
+#endif
 	std::vector<std::string> earlier_hashes;
 	GameOfLifeField<MulticolorValue> field(current_winsize.ws_col, current_winsize.ws_row);
 	get_width = [&field]() {
@@ -231,6 +240,7 @@ int main(int argc, char *argv[]) {
 	pthread_mutex_lock(&mtx);
 
 	while(!field_done || repeats_to_do > 0) {
+#if !defined(FIXED_SIZE)
 		winsize new_winsize;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &new_winsize);
 		if(current_winsize.ws_col != new_winsize.ws_col
@@ -238,6 +248,7 @@ int main(int argc, char *argv[]) {
 			field.resize(new_winsize.ws_col, new_winsize.ws_row);
 		}
 		current_winsize = new_winsize;
+#endif
 
 		if(repeats_to_do > 0) {
 			--repeats_to_do;
