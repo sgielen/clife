@@ -11,6 +11,8 @@
 #include <cassert>
 #include <cmath>
 #include <ctime>
+#include <algorithm>
+#include <functional>
 #include <sys/ioctl.h>
 
 /** Written by Sjors Gielen, eth0 winter 2014
@@ -145,7 +147,7 @@ struct MulticolorValue {
 	void begin_screen(std::ostream &os) const {
 		if(!to_ledscreen && !concise) {
 			std::cout << "+";
-			for(size_t i = 0; i < get_width(); ++i) {
+			for(int i = 0; i < get_width(); ++i) {
 				std::cout << "-";
 			}
 			std::cout << "+\n";
@@ -188,7 +190,7 @@ struct MulticolorValue {
 template <typename FieldType>
 void check_stop_condition(FieldType field, std::vector<std::string> &earlier_hashes, bool &done, int &repeats_to_do) {
 	std::string hash = field.field_hash();
-	for(int i = 0; i < earlier_hashes.size(); ++i) {
+	for(size_t i = 0; i < earlier_hashes.size(); ++i) {
 		if(earlier_hashes[i] == hash) {
 			done = true;
 			repeats_to_do = 50;

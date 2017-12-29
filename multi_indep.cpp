@@ -52,7 +52,7 @@ struct SimpleValue {
 template <typename FieldType>
 void check_stop_condition(FieldType field, std::vector<std::string> &earlier_hashes, bool &done, int &repeats_to_do) {
 	std::string hash = field.field_hash();
-	for(int i = 0; i < earlier_hashes.size(); ++i) {
+	for(size_t i = 0; i < earlier_hashes.size(); ++i) {
 		if(earlier_hashes[i] == hash) {
 			done = true;
 			repeats_to_do = 10;
