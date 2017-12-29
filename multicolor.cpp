@@ -154,8 +154,10 @@ struct MulticolorValue {
 		}
 	}
 	void end_screen(std::ostream &os) const {
-		begin_screen(os);
-		std::cout << "\x1b[1;1H" << std::flush;
+		if(!to_ledscreen && !concise) {
+			begin_screen(os);
+			std::cout << "\x1b[1;1H" << std::flush;
+		}
 	}
 	void begin_line(std::ostream &os) const {
 		if(!to_ledscreen && !concise) {
