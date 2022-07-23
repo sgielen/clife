@@ -3,8 +3,9 @@
 #include <iostream>
 #include <vector>
 #include <stdexcept>
-#include <openssl/md5.h>
+//#include <openssl/md5.h>
 #include <stdlib.h>
+#include <cassert>
 
 /** Written by Sjors Gielen, eth0 winter 2014
  *  Feel free to use this for anything you like
@@ -32,9 +33,16 @@ struct GameOfLifeRow {
 	}
 
 	ValueType &operator[](unsigned int x) {
-		if(x >= width) {
-			throw std::runtime_error("Out of bounds");
+		assert(x < width);
+		IteratorType copy = row_ptr;
+		while(x-- > 0) {
+			copy++;
 		}
+		return *copy;
+	}
+
+	ValueType const &operator[](unsigned int x) const {
+		assert(x < width);
 		IteratorType copy = row_ptr;
 		while(x-- > 0) {
 			copy++;
@@ -73,9 +81,7 @@ struct GameOfLifeField {
 	inline int get_width() { return width; }
 
 	GameOfLifeRow<ValueType> operator[](unsigned int y) {
-		if(y >= height) {
-			throw std::runtime_error("Out of bounds");
-		}
+		assert(y < height);
 		return GameOfLifeRow<ValueType>(width, field.begin() + y * width);
 	}
 
@@ -104,9 +110,7 @@ struct GameOfLifeField {
 	}
 
 	bool is_set(int y, int x) {
-		if(!is_in_bounds(y, x)) {
-			throw std::runtime_error("Out of bounds");
-		}
+		assert(is_in_bounds(y, x));
 		return field[y * width + x];
 	}
 
@@ -186,6 +190,7 @@ struct GameOfLifeField {
 		os << std::flush;
 	}
 
+/*
 	std::string field_hash() const {
 		char digest[MD5_DIGEST_LENGTH];
 		std::string str_field;
@@ -195,11 +200,10 @@ struct GameOfLifeField {
 		MD5((unsigned char*) str_field.c_str(), str_field.length(), (unsigned char*)&digest);
 		return std::string(&*digest, MD5_DIGEST_LENGTH);
 	}
+*/
 
 	void generateRandom(int chance_set) {
-		if(chance_set < 0 || chance_set > 100) {
-			throw std::runtime_error("Out of bounds");
-		}
+		assert(chance_set >= 0 && chance_set <= 100);
 		for(int i = 0; i < height; ++i) {
 			for(int j = 0; j < width; ++j) {
 				field[i * width + j] = ValueType(rand() % 100 < chance_set ? true : false);
