@@ -187,16 +187,16 @@ struct MulticolorValue {
 };
 
 template <typename FieldType>
-void check_stop_condition(FieldType field, std::vector<uint64_t> &earlier_hashes, bool &done, int &repeats_to_do) {
+bool check_stop_condition(FieldType field, BloomFilter &bloom_filter, int &stop_counter) {
 	uint64_t hash = field.field_hash();
-	for(size_t i = 0; i < earlier_hashes.size(); ++i) {
-		if(earlier_hashes[i] == hash) {
-			done = true;
-			repeats_to_do = 50;
-			break;
-		}
+	if (bloom_filter.test(hash)) {
+		if (++stop_counter >= 50)
+			return true;
+		return false;
+	} else {
+		stop_counter = 0;
+		return false;
 	}
-	earlier_hashes.push_back(hash);
 }
 
 int main(int argc, char *argv[]) {
@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
 #else
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &current_winsize);
 #endif
-	std::vector<uint64_t> earlier_hashes;
+	BloomFilter bloom_filter;
 	GameOfLifeField<MulticolorValue> field(current_winsize.ws_col, current_winsize.ws_row);
 	get_width = [&field]() {
 		return field.get_width();
@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
 	field.generateRandom(35);
 
 	bool field_done = false;
-	int repeats_to_do = 0;
+	int stop_counter = 0;
 
 	pthread_mutex_t mtx;
 	pthread_mutex_init(&mtx, nullptr);
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
 	ts.tv_sec = std::time(nullptr);
 	pthread_mutex_lock(&mtx);
 
-	while(!field_done || repeats_to_do > 0) {
+	while(!field_done) {
 #if !defined(FIXED_SIZE)
 		winsize new_winsize;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &new_winsize);
@@ -251,14 +251,9 @@ int main(int argc, char *argv[]) {
 		current_winsize = new_winsize;
 #endif
 
-		if(repeats_to_do > 0) {
-			--repeats_to_do;
-		}
 		field.nextState();
 		field.print_simple(std::cout);
-		if(!field_done) {
-			check_stop_condition(field, earlier_hashes, field_done, repeats_to_do);
-		}
+		field_done = check_stop_condition(field, bloom_filter, stop_counter);
 		ts.tv_nsec += microsleeptime * 1'000;
 		ts.tv_sec += ts.tv_nsec / 1'000'000'000;
 		ts.tv_nsec %= 1'000'000'000;

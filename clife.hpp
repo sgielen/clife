@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <stdlib.h>
 #include <cassert>
+#include <bitset>
 
 extern "C" {
 #include "xxhash/xxhash.c"
@@ -13,6 +14,25 @@ extern "C" {
 /** Written by Sjors Gielen, eth0 winter 2014
  *  Feel free to use this for anything you like
  */
+
+/**
+ * Bloom filter, used to check duplicate states
+ */
+struct BloomFilter {
+	std::bitset<64 * 1024> contents;
+	bool test(uint64_t data) {
+		bool ret = true;
+		uint16_t ix = data;
+		for(int i = 0; i < 4; i++) {
+			data >>= 16;
+			if (!contents[ix]) {
+				ret = false;
+			}
+			contents[ix] = 1;
+		}
+		return ret;
+	}
+};
 
 /**
  * A ValueType must be copyable and implement:
