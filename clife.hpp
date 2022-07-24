@@ -190,24 +190,35 @@ struct GameOfLifeField {
 		os << std::flush;
 	}
 
-/*
-	std::string field_hash() const {
-		char digest[MD5_DIGEST_LENGTH];
-		std::string str_field;
-		for(auto const &cell : field) {
-			str_field += cell.hash();
-		}
-		MD5((unsigned char*) str_field.c_str(), str_field.length(), (unsigned char*)&digest);
-		return std::string(&*digest, MD5_DIGEST_LENGTH);
+	void set(int x, int y, ValueType value) {
+		field[y * width + x] = value;
 	}
-*/
+
+	void generateHMirror() {
+		for(int y = 0; y < height; ++y) {
+			for(int x = 0; x < (width + 1) / 2; ++x) {
+				ValueType value = ValueType(rand() % 4 < 1);
+				set(x, y, value);
+				set(width - x - 1, y, value);
+			}
+		}
+	}
+
+	void generateRotated() {
+		for(int y = 0; y < height; ++y) {
+			for(int x = 0; x < (width + 1) / 2; ++x) {
+				ValueType value = ValueType(rand() % 4 < 1);
+				set(x, y, value);
+				set(width - x - 1, height - y - 1, value);
+			}
+		}
+	}
 
 	void generateRandom(int chance_set) {
-		assert(chance_set >= 0 && chance_set <= 100);
-		for(int i = 0; i < height; ++i) {
-			for(int j = 0; j < width; ++j) {
-				field[i * width + j] = ValueType(rand() % 100 < chance_set ? true : false);
-			}
+		if (rand() & 1) {
+			generateRotated();
+		} else {
+			generateHMirror();
 		}
 	}
 
