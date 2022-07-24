@@ -3,8 +3,11 @@
 #include <iostream>
 #include <vector>
 #include <stdexcept>
-#include <openssl/md5.h>
 #include <stdlib.h>
+
+extern "C" {
+#include "xxhash/xxhash.c"
+}
 
 /** Written by Sjors Gielen, eth0 winter 2014
  *  Feel free to use this for anything you like
@@ -59,8 +62,8 @@ struct GameOfLifeField {
 		std::vector<ValueType> newfield(w * h, ValueType());
 		int minwidth = w < width ? w : width;
 		int minheight = h < height ? h : height;
-		for(size_t x = 0; x < minwidth; ++x) {
-			for(size_t y = 0; y < minheight; ++y) {
+		for(int x = 0; x < minwidth; ++x) {
+			for(int y = 0; y < minheight; ++y) {
 				newfield[y * w + x] = field[y * width + x];
 			}
 		}
@@ -186,14 +189,14 @@ struct GameOfLifeField {
 		os << std::flush;
 	}
 
-	std::string field_hash() const {
-		char digest[MD5_DIGEST_LENGTH];
-		std::string str_field;
-		for(auto const &cell : field) {
-			str_field += cell.hash();
-		}
-		MD5((unsigned char*) str_field.c_str(), str_field.length(), (unsigned char*)&digest);
-		return std::string(&*digest, MD5_DIGEST_LENGTH);
+	uint64_t field_hash() const {
+                XXH3_state_t state;
+                XXH3_64bits_reset(&state);
+                for(auto const &cell : field) {
+                        bool value = bool(cell);
+                        XXH3_64bits_update(&state, &value, sizeof(value));
+                }
+                return XXH3_64bits_digest(&state);
 	}
 
 	void generateRandom(int chance_set) {

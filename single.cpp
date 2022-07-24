@@ -4,7 +4,6 @@
 #include "clife.hpp"
 #include "util.hpp"
 #include <unistd.h>
-#include <openssl/md5.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -36,8 +35,8 @@ struct SimpleValue {
 };
 
 template <typename FieldType>
-void check_stop_condition(FieldType field, std::vector<std::string> &earlier_hashes, bool &done, int &repeats_to_do) {
-	std::string hash = field.field_hash();
+void check_stop_condition(FieldType field, std::vector<uint64_t> &earlier_hashes, bool &done, int &repeats_to_do) {
+	uint64_t hash = field.field_hash();
 	for(size_t i = 0; i < earlier_hashes.size(); ++i) {
 		if(earlier_hashes[i] == hash) {
 			done = true;
@@ -63,7 +62,7 @@ int main(int argc, char *argv[]) {
 
 	init_random();
 
-	std::vector<std::string> earlier_hashes;
+	std::vector<uint64_t> earlier_hashes;
 	GameOfLifeField<SimpleValue<char(0x80), 0>> field(8, 80);
 
 	field.generateRandom(35);
