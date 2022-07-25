@@ -256,7 +256,7 @@ struct GameOfLifeField {
 		}
 	}
 
-private:
+public:
 	std::vector<ValueType> field;
 	int height;
 	int width;
