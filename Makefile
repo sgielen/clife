@@ -1,4 +1,4 @@
-CFLAGS=-lcrypto -O3 -Wall -I/usr/local/include -std=c++11
+CFLAGS=-O3 -Wall -I/usr/local/include -std=c++14
 
 all: single multi_indep multicolor
 
