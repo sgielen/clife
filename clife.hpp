@@ -1,6 +1,9 @@
 #pragma once
 
+#ifdef WITH_CLIFE_IOSTREAM
 #include <iostream>
+#endif
+
 #include <vector>
 #include <stdexcept>
 #include <stdlib.h>
@@ -169,6 +172,7 @@ struct GameOfLifeField {
 		field = new_field;
 	}
 
+#ifdef WITH_CLIFE_IOSTREAM
 	void print(std::ostream &os) {
 		os << "+";
 		for(int j = 0; j < width; ++j) {
@@ -213,6 +217,7 @@ struct GameOfLifeField {
 		}
 		os << std::flush;
 	}
+#endif
 
 	void set(int x, int y, ValueType value) {
 		field[y * width + x] = value;
