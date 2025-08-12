@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <cassert>
 #include <bitset>
+#include <cstdint>
 
 #ifdef WITH_XXHASH
 extern "C" {
