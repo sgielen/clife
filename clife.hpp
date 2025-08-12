@@ -10,9 +10,11 @@
 #include <cassert>
 #include <bitset>
 
+#ifdef WITH_XXHASH
 extern "C" {
 #include "xxhash/xxhash.c"
 }
+#endif
 
 /** Written by Sjors Gielen, eth0 winter 2014
  *  Feel free to use this for anything you like
@@ -252,6 +254,7 @@ struct GameOfLifeField {
 		}
 	}
 
+#ifdef WITH_XXHASH
 	uint64_t field_hash() const {
 		XXH3_state_t state;
 		XXH3_64bits_reset(&state);
@@ -261,6 +264,7 @@ struct GameOfLifeField {
 		}
 		return XXH3_64bits_digest(&state);
 	}
+#endif
 
 	void generateRandom(int chance_set) {
 		int r = rand() & 3;
