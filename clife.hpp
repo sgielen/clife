@@ -243,6 +243,15 @@ struct GameOfLifeField {
 		}
 	}
 
+	void generateFullRandom() {
+		for(int y = 0; y < height; ++y) {
+			for(int x = 0; x < width; ++x) {
+				ValueType value = ValueType(rand() % 4 < 1);
+				set(x, y, value);
+			}
+		}
+	}
+
 	uint64_t field_hash() const {
 		XXH3_state_t state;
 		XXH3_64bits_reset(&state);
@@ -254,10 +263,13 @@ struct GameOfLifeField {
 	}
 
 	void generateRandom(int chance_set) {
-		if (rand() & 1) {
+		int r = rand() & 3;
+		if (r == 0) {
 			generateRotated();
-		} else {
+		} else if (r == 1) {
 			generateHMirror();
+		} else {
+			generateFullRandom();
 		}
 	}
 
